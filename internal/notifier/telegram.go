@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"os"
 	"time"
 )
 
@@ -18,13 +20,48 @@ type TelegramNotifier struct {
 }
 
 // NewTelegramNotifier 创建Telegram通知器实例
+// 自动检测环境变量 HTTPS_PROXY 或 HTTP_PROXY 设置代理
 func NewTelegramNotifier(botToken, chatID string) *TelegramNotifier {
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+
+	// 检查代理环境变量
+	proxyURL := os.Getenv("HTTPS_PROXY")
+	if proxyURL == "" {
+		proxyURL = os.Getenv("HTTP_PROXY")
+	}
+
+	if proxyURL != "" {
+		if proxy, err := url.Parse(proxyURL); err == nil {
+			client.Transport = &http.Transport{
+				Proxy: http.ProxyURL(proxy),
+			}
+		}
+	}
+
 	return &TelegramNotifier{
 		botToken: botToken,
 		chatID:   chatID,
-		client: &http.Client{
-			Timeout: 30 * time.Second,
+		client:   client,
+	}
+}
+
+// NewTelegramNotifierWithProxy 创建带代理的Telegram通知器
+func NewTelegramNotifierWithProxy(botToken, chatID, proxyAddr string) *TelegramNotifier {
+	proxyURL, _ := url.Parse("http://" + proxyAddr)
+
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+		Transport: &http.Transport{
+			Proxy: http.ProxyURL(proxyURL),
 		},
+	}
+
+	return &TelegramNotifier{
+		botToken: botToken,
+		chatID:   chatID,
+		client:   client,
 	}
 }
 

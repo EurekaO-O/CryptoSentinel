@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 
 	"CryptoSentinel/internal/model"
@@ -23,6 +24,22 @@ func NewCollectorV2(ahr999URL string) *CollectorV2 {
 	return &CollectorV2{
 		client: &http.Client{
 			Timeout: 30 * time.Second,
+		},
+		ahr999URL: ahr999URL,
+		userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+	}
+}
+
+// NewCollectorV2WithProxy 创建带代理的数据采集器
+func NewCollectorV2WithProxy(ahr999URL, proxyAddr string) *CollectorV2 {
+	proxyURL, _ := url.Parse("http://" + proxyAddr)
+
+	return &CollectorV2{
+		client: &http.Client{
+			Timeout: 30 * time.Second,
+			Transport: &http.Transport{
+				Proxy: http.ProxyURL(proxyURL),
+			},
 		},
 		ahr999URL: ahr999URL,
 		userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
