@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  cryptosentinel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cryptosentinel
+    restart: unless-stopped
+
+    # 敏感信息通过环境变量传入
+    environment:
+      # Telegram 配置（必须设置）
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+
+      # 可选配置
+      - AHR999_URL=${AHR999_URL:-https://dncapi.bostonkey.com/api/v2/index/ahr999}
+      - CRON_SPEC=${CRON_SPEC:-0 0 9 * * 1}
+      - LEVERAGE=${LEVERAGE:-1.0}
+      - RUN_ON_START=${RUN_ON_START:-false}
+      - TZ=${TZ:-Asia/Shanghai}
+
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 32M
+
+    # 安全配置
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+    # 临时文件系统（如果程序需要写入临时文件）
+    tmpfs:
+      - /tmp:size=10M,mode=1777
+
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # 网络配置
+    networks:
+      - cryptosentinel-network
+
+networks:
+  cryptosentinel-network:
+    driver: bridge

@@ -1,0 +1,22 @@
+# CryptoSentinel 配置文件
+# 敏感信息建议通过环境变量设置，不要直接写在此文件中
+
+telegram:
+  # Telegram Bot Token (从 @BotFather 获取)
+  # 环境变量: TELEGRAM_BOT_TOKEN
+  bot_token: ""
+  # Telegram Chat ID (目标聊天/群组ID)
+  # 环境变量: TELEGRAM_CHAT_ID
+  chat_id: ""
+
+data_source:
+  # AHR999 指数数据接口 URL
+  # 环境变量: AHR999_URL
+  ahr999_url: "https://dncapi.bostonkey.com/api/v2/index/ahr999"
+
+schedule:
+  # Cron 表达式 - 定时执行时间
+  # 格式: 秒 分 时 日 月 周
+  # 示例: "0 0 9 * * 1" 表示每周一上午9点执行
+  # 环境变量: CRON_SPEC
+  cron_spec: "0 0 9 * * 1"

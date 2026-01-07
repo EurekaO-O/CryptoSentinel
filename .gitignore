@@ -1,0 +1,39 @@
+# 二进制文件
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+cryptosentinel
+
+# 测试文件
+*.test
+
+# 输出目录
+/bin/
+/out/
+
+# 依赖目录
+/vendor/
+
+# IDE 配置
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 环境变量文件（包含敏感信息）
+.env
+.env.local
+.env.*.local
+
+# 日志文件
+*.log
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# Claude 配置
+.claude/
